@@ -13,11 +13,11 @@ class MainView extends StatelessWidget {
   MainView({super.key});
 
   final List pages = [
-    RequestView(),
-    OffersView(),
-    PostsView(),
-    ProfileView(),
     HomeView(),
+    ProfileView(),
+    PostsView(),
+    OffersView(),
+    RequestView(),
   ];
 
   @override
@@ -55,15 +55,7 @@ class MainView extends StatelessWidget {
 
                       items: const [
                         BottomNavigationBarItem(
-                          icon: Icon(Icons.calendar_today),
-                          label: '',
-                        ),
-                        BottomNavigationBarItem(
-                          icon: Icon(Icons.local_offer_outlined),
-                          label: '',
-                        ),
-                        BottomNavigationBarItem(
-                          icon: Icon(Icons.post_add_outlined),
+                          icon: Icon(Icons.home_outlined),
                           label: '',
                         ),
                         BottomNavigationBarItem(
@@ -71,7 +63,15 @@ class MainView extends StatelessWidget {
                           label: '',
                         ),
                         BottomNavigationBarItem(
-                          icon: Icon(Icons.home_outlined),
+                          icon: Icon(Icons.post_add_outlined),
+                          label: '',
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.local_offer_outlined),
+                          label: '',
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.calendar_today),
                           label: '',
                         ),
                       ],
