@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:wafer/core/utils/app_colors.dart';
 import 'package:wafer/core/utils/styles.dart';
 import 'package:wafer/core/widgets/custom_button.dart';
+import 'package:wafer/features/auth/presentation/view/login_screen.dart';
 import 'package:wafer/features/auth/presentation/view/widgets/custom_text_field.dart';
+import 'package:wafer/features/botton_nav_bar/presentation/views/main_view.dart';
 import 'widgets/auth_header.dart';
 import 'widgets/auth_divider.dart';
 import 'widgets/social_login_buttons.dart';
@@ -61,7 +63,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     children: [
                       Center(
                         child: Text(
-                          'إنشاء حساب جديد',
+                          'إنـــشـــاء حـــســـاب جـــديـــد',
                           style: Styles.textStyle30.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -70,7 +72,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       const SizedBox(height: 4),
                       Center(
                         child: Text(
-                          'إبدأ رحلتك الآن',
+                          'ابدأ رحـــلــتك الأن',
                           style: Styles.textStyle18.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -87,7 +89,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'الاسم الكامل',
+                                  ' الاسم الكامل',
                                   style: Styles.textStyle18.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -106,7 +108,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'اسم المستخدم',
+                                  'اسم المستخدم ',
                                   style: Styles.textStyle18.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -124,7 +126,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       const SizedBox(height: 18),
 
                       Text(
-                        'البريد الإلكتروني',
+                        'البـــريـــد الإلكـــتــروني',
                         style: Styles.textStyle18.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -138,7 +140,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       const SizedBox(height: 18),
 
                       Text(
-                        'الباسورد',
+                        'الـــبـــاســـورد',
                         style: Styles.textStyle18.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -163,7 +165,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         ),
                       ),
                       const SizedBox(height: 8),
-
+                      // هتتعدل لسه
                       _AccountTypeRow(
                         label: 'جمعية خيرية',
                         value: _isCharity,
@@ -178,12 +180,18 @@ class _SignupScreenState extends State<SignupScreen> {
                         onChanged: (v) =>
                             setState(() => _isEnterprise = v ?? false),
                       ),
+                      //
                       const SizedBox(height: 24),
 
                       CustomButton(
-                        text: 'إنشاء حساب',
-                        onpressed: () {},
-                        color: AppColors.primaryText,
+                        text: 'إنــــشــــاء حـــســــاب',
+                        onpressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => MainView()),
+                          );
+                        },
+                        color: Color(0xFF171123),
                         textColor: AppColors.fourthText,
                       ),
                       const SizedBox(height: 20),
@@ -202,7 +210,20 @@ class _SignupScreenState extends State<SignupScreen> {
                               fontWeight: FontWeight.normal,
                             ),
                           ),
-                          Text(' تسجيل الدخول', style: Styles.textStyle18),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const LoginScreen(),
+                                ),
+                              );
+                            },
+                            child: Text(
+                              ' تسجيل الدخول',
+                              style: Styles.textStyle18,
+                            ),
+                          ),
                         ],
                       ),
                     ],
@@ -216,6 +237,8 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 }
+
+//  عدل الحنه دي وقت الربط
 
 class _AccountTypeRow extends StatelessWidget {
   final String label;

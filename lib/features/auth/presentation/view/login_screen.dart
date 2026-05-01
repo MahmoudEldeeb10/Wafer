@@ -4,6 +4,7 @@ import 'package:wafer/core/utils/styles.dart';
 import 'package:wafer/core/widgets/custom_button.dart';
 import 'package:wafer/features/auth/presentation/view/signup_screen.dart';
 import 'package:wafer/features/auth/presentation/view/widgets/custom_text_field.dart';
+import 'package:wafer/features/botton_nav_bar/presentation/views/main_view.dart';
 import 'widgets/auth_header.dart';
 import 'widgets/auth_divider.dart';
 import 'widgets/social_login_buttons.dart';
@@ -107,9 +108,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 28),
 
                       CustomButton(
-                        text: 'تسجيل الدخول',
-                        onpressed: () {},
-                        color: AppColors.primaryText,
+                        text: ' تـــســـجـــيـــل الـــدخـــول',
+                        onpressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => MainView()),
+                          );
+                        },
+                        color: Color(0xFF171123),
                         textColor: AppColors.fourthText,
                       ),
                       const SizedBox(height: 20),
