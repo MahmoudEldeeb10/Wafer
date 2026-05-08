@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wafer/features/auth/presentation/view/login_screen.dart';
 import 'package:wafer/features/botton_nav_bar/presentation/manager/cubit/bottom_nav_cubit.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:wafer/splash/presentation/view/splash_view.dart';
+import 'package:wafer/features/splash/presentation/view/splash_view.dart';
 
 void main() {
   runApp(const Wafer());

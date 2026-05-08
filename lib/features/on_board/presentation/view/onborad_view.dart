@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:wafer/core/utils/app_colors.dart';
 import 'package:wafer/core/utils/styles.dart';
+import 'package:wafer/core/widgets/custom_button.dart';
 import 'package:wafer/features/auth/presentation/view/login_screen.dart';
 
 class OnboardingView extends StatelessWidget {
@@ -25,8 +27,8 @@ class OnboardingView extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.black.withOpacity(0.1),
-                  Colors.black.withOpacity(0.4),
+                  AppColors.tertiaryText.withOpacity(0.1),
+                  AppColors.tertiaryText.withOpacity(0.4),
                 ],
               ),
             ),
@@ -43,7 +45,7 @@ class OnboardingView extends StatelessWidget {
                   child: Text(
                     'وَافِــر',
                     style: Styles.textStyle30.copyWith(
-                      color: Colors.black,
+                      color: AppColors.tertiaryText,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -54,7 +56,10 @@ class OnboardingView extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 16, right: 24),
                   child: Text(
                     'الأن دورك أنت\nلتصنع تأثيراً فى المجتمع\nو ترتقي به !',
-                    style: Styles.textStyle30.copyWith(color: Colors.black),
+                    style: Styles.textStyle30.copyWith(
+                      color: AppColors.tertiaryText,
+                      fontWeight: FontWeight.bold,
+                    ),
                     textAlign: TextAlign.right,
                   ),
                 ),
@@ -67,76 +72,18 @@ class OnboardingView extends StatelessWidget {
                     horizontal: 24,
                     vertical: 32,
                   ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.85),
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 14,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // أيقونة السهم
-                        GestureDetector(
-                          onTap: () {
-                            // هنا هتروحي على Login أو Register
-                          },
-                          child: Container(
-                            width: 45,
-                            height: 45,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 6,
-                                ),
-                              ],
-                            ),
-                            child: IconButton(
-                              onPressed: () {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const LoginScreen(),
-                                  ),
-                                );
-                              },
-                              icon: Icon(
-                                Icons.send,
-                                color: Colors.black,
-                                size: 20,
-                              ),
-                            ),
-                            //
-                            // Icon(
-                            //   Icons.send,
-                            //   color: Colors.black,
-                            //   size: 20,
-                            // ),
-                          ),
+                  child: CustomButton(
+                    text: 'ابدأ رحلتك الآن',
+                    onpressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LoginScreen(),
                         ),
-
-                        // النص
-                        Text(
-                          'ابـدأ رحلـتك الأن',
-                          style: Styles.textStyle18.copyWith(
-                            color: Colors.black,
-                          ),
-                        ),
-                        // السهمين
-                        Text(
-                          '<<<',
-                          style: Styles.textStyle18.copyWith(
-                            color: Colors.black54,
-                          ),
-                        ),
-                      ],
-                    ),
+                      );
+                    },
+                    color: AppColors.fourthText,
+                    textColor: AppColors.tertiaryText,
                   ),
                 ),
               ],
