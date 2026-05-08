@@ -7,6 +7,7 @@ class CustomHomeCard extends StatelessWidget {
   final String productName;
   final int quantity;
   final String? imageUrl;
+  final int category;
 
   const CustomHomeCard({
     super.key,
@@ -14,6 +15,7 @@ class CustomHomeCard extends StatelessWidget {
     required this.productName,
     required this.quantity,
     this.imageUrl,
+    required this.category,
   });
 
   @override
@@ -59,6 +61,8 @@ class CustomHomeCard extends StatelessWidget {
                   Text('المنتج: $productName', style: Styles.textStyle14),
                   const SizedBox(height: 4),
                   Text('الكمية: $quantity', style: Styles.textStyle14),
+                  const SizedBox(height: 4),
+                  Text('الكمية: $category', style: Styles.textStyle14),
                   const SizedBox(height: 12),
                   SizedBox(
                     width: double.infinity,

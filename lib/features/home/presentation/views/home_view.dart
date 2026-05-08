@@ -102,10 +102,12 @@ class HomeView extends StatelessWidget {
                         itemBuilder: (context, index) {
                           final offer = state.offers[index];
                           return CustomHomeCard(
+
+                            imageUrl: offer.productImage,
                             title: offer.donorOrganizationName,
                             productName: offer.productName,
                             quantity: offer.quantity,
-                            imageUrl: offer.productImage,
+                            category: offer.category,
                           );
                         },
                       );
