@@ -121,7 +121,7 @@ class HomeView extends StatelessWidget {
                     return const SizedBox();
                   },
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.08),
               ],
             ),
           ),
