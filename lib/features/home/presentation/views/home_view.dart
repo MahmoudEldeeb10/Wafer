@@ -5,6 +5,7 @@ import 'package:wafer/core/utils/styles.dart';
 import 'package:wafer/features/home/presentation/views/widgets/custom_home_card.dart';
 import 'package:wafer/features/offers/data/repo/offers_repo.dart';
 import 'package:wafer/features/offers/presentation/manger/offers_cubit.dart';
+import 'package:wafer/features/offers/presentation/manger/offers_state.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -121,7 +122,7 @@ class HomeView extends StatelessWidget {
                     return const SizedBox();
                   },
                 ),
-                
+
                 SizedBox(height: MediaQuery.of(context).size.height * 0.08),
               ],
             ),

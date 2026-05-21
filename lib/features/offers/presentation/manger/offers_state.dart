@@ -1,4 +1,6 @@
-part of 'offers_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wafer/features/offers/data/repo/offers_repo.dart';
+import 'package:wafer/features/offers/presentation/manger/offers_cubit.dart';
 
 class OffersCubit extends Cubit<OffersState> {
   final OffersRepo offersRepo;

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wafer/core/services/dio_client.dart';
 import 'package:wafer/core/utils/api_constants.dart';
 import '../models/auth_model.dart';
@@ -12,8 +13,15 @@ class AuthRepo {
         ApiConstants.login,
         data: request.toJson(),
       );
-      print('Response data: ${response.data}');
-      return AuthResponseModel.fromJson(response.data);
+      final authResponse = AuthResponseModel.fromJson(response.data);
+
+      // ✅ احفظ الـ token
+      if (authResponse.data?.token != null) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', authResponse.data!.token!);
+      }
+
+      return authResponse;
     } on DioException catch (e) {
       final data = e.response?.data;
       final errors = data?['error']?['details']?['errors'] as List?;
@@ -45,4 +53,3 @@ class AuthRepo {
     }
   }
 }
-

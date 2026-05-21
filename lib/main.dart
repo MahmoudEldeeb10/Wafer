@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
- import 'package:wafer/features/botton_nav_bar/presentation/manager/cubit/bottom_nav_cubit.dart';
+import 'package:wafer/features/botton_nav_bar/presentation/manager/cubit/bottom_nav_cubit.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:wafer/features/splash/presentation/view/splash_view.dart';
 

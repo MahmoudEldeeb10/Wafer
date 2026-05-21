@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:wafer/core/widgets/custom_app_bar.dart';
 import 'package:wafer/features/offers/data/repo/offers_repo.dart';
 import 'package:wafer/features/offers/presentation/manger/offers_cubit.dart';
+import 'package:wafer/features/offers/presentation/manger/offers_state.dart';
 import 'package:wafer/features/offers/presentation/views/widgets/offer_card.dart';
 
 class OffersView extends StatelessWidget {
