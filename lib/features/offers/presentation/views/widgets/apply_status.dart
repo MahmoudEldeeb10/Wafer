@@ -1,0 +1,1 @@
+enum ApplyStatus { none, applied, duplicate }

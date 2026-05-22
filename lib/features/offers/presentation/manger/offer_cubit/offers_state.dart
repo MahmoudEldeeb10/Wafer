@@ -1,5 +1,3 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:wafer/features/offers/data/repo/offers_repo.dart';
 import 'package:wafer/features/offers/data/models/offer_model.dart';
 
 abstract class OffersState {}

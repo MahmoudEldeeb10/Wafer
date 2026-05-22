@@ -26,7 +26,7 @@ class AuthCubit extends Cubit<AuthState> {
           if (response.data!.token != null) {
             await prefs.setString('token', response.data!.token!);
             await prefs.setInt('accountType', response.data!.role!);
-print('Saved accountType: ${prefs.getInt('accountType')}');
+            print('Saved accountType: ${prefs.getInt('accountType')}');
           }
           emit(AuthSuccess());
         } else {
@@ -51,5 +51,4 @@ print('Saved accountType: ${prefs.getInt('accountType')}');
       emit(AuthError(e.toString().replaceAll('Exception: ', '')));
     }
   }
-
 }

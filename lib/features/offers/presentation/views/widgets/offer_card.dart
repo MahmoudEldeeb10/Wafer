@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wafer/core/utils/app_colors.dart';
 import 'package:wafer/features/offers/data/models/offer_model.dart';
+import 'package:wafer/features/offers/presentation/views/widgets/offer_details_bottom_sheet.dart';
 
 class OfferCard extends StatelessWidget {
   final OfferModel offer;
@@ -58,7 +59,15 @@ class OfferCard extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (_) =>
+                        OfferDetailsBottomSheet(offerId: offer.offerId),
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryText,
                 ),

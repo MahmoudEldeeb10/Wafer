@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:wafer/core/widgets/custom_app_bar.dart';
 import 'package:wafer/features/offers/data/repo/offers_repo.dart';
-import 'package:wafer/features/offers/presentation/manger/offers_cubit.dart';
-import 'package:wafer/features/offers/presentation/manger/offers_state.dart';
+import 'package:wafer/features/offers/presentation/manger/offer_cubit/offers_cubit.dart';
+import 'package:wafer/features/offers/presentation/manger/offer_cubit/offers_state.dart';
 import 'package:wafer/features/offers/presentation/views/widgets/offer_card.dart';
 
 class OffersView extends StatelessWidget {
@@ -46,6 +46,7 @@ class OffersView extends StatelessWidget {
                     },
                   ),
                 ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.08),
               ],
             ),
           ),
