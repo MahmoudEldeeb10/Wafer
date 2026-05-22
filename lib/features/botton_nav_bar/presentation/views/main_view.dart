@@ -13,7 +13,7 @@ class MainView extends StatelessWidget {
   MainView({super.key});
 
   final List pages = [
-    HomeView(),
+    // HomeView(),
     ProfileView(),
     PostsView(),
     OffersView(),
@@ -54,10 +54,10 @@ class MainView extends StatelessWidget {
                       unselectedItemColor: AppColors.tertiaryText,
 
                       items: const [
-                        BottomNavigationBarItem(
-                          icon: Icon(Icons.home_outlined),
-                          label: '',
-                        ),
+                        // BottomNavigationBarItem(
+                        //   icon: Icon(Icons.home_outlined),
+                        //   label: '',
+                        // ),
                         BottomNavigationBarItem(
                           icon: Icon(Icons.person_outline),
                           label: '',
