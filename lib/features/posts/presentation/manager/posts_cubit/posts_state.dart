@@ -17,3 +17,5 @@ class PostsError extends PostsState {
 }
 
 class PostsApplySuccess extends PostsState {}
+
+class PostsFulfillSuccess extends PostsState {}

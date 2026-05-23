@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dio/dio.dart';
+import 'package:wafer/core/utils/app_colors.dart';
 import 'package:wafer/core/widgets/custom_app_bar.dart';
 import 'package:wafer/features/offers/data/repo/offers_repo.dart';
 import 'package:wafer/features/offers/presentation/manger/offer_cubit/offers_cubit.dart';
@@ -15,6 +16,8 @@ class OffersView extends StatelessWidget {
     return BlocProvider(
       create: (context) => OffersCubit(OffersRepo(Dio()))..getOffers(),
       child: Scaffold(
+        backgroundColor: AppColors.fourthText,
+
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(12.0),
