@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wafer/core/enum/apply_status.dart';
 import 'package:wafer/features/offers/data/repo/offer_details_repo.dart';
 import 'offer_details_state.dart';
 

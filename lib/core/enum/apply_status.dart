@@ -1,0 +1,1 @@
+enum ApplyStatus { idle, loading, applied, alreadyApplied }

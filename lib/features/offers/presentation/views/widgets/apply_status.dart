@@ -1,1 +1,1 @@
-enum ApplyStatus { none, applied, duplicate }
+// enum ApplyStatus { none, applied, duplicate, alreadyApplied }

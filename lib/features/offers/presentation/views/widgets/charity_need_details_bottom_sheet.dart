@@ -3,27 +3,28 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:wafer/core/enum/apply_status.dart';
 import 'package:wafer/core/utils/app_colors.dart';
-import 'package:wafer/features/offers/data/repo/offer_details_repo.dart';
-import 'package:wafer/features/offers/presentation/manger/offer_details_cubit/offer_details_cubit.dart';
-import 'package:wafer/features/offers/presentation/manger/offer_details_cubit/offer_details_state.dart';
+import 'package:wafer/features/offers/data/models/charity_need_model.dart';
+import 'package:wafer/features/offers/data/repo/charity_needs_repo.dart';
+import 'package:wafer/features/offers/presentation/manger/charity_need_details_cubit/charity_need_details_cubit.dart';
+import 'package:wafer/features/offers/presentation/manger/charity_needs_cubit/charity_needs_state.dart';
 
-class OfferDetailsBottomSheet extends StatelessWidget {
-  final String offerId;
+class CharityNeedDetailsBottomSheet extends StatelessWidget {
+  final String charityNeedId;
 
-  const OfferDetailsBottomSheet({super.key, required this.offerId});
+  const CharityNeedDetailsBottomSheet({super.key, required this.charityNeedId});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) =>
-          OfferDetailsCubit(OfferDetailsRepo(Dio()))..getOfferDetails(offerId),
-      child: const _OfferDetailsContent(),
+      create: (_) => CharityNeedDetailsCubit(CharityNeedsRepo(Dio()))
+        ..getDetails(charityNeedId),
+      child: const _Content(),
     );
   }
 }
 
-class _OfferDetailsContent extends StatelessWidget {
-  const _OfferDetailsContent();
+class _Content extends StatelessWidget {
+  const _Content();
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +32,9 @@ class _OfferDetailsContent extends StatelessWidget {
       textDirection: TextDirection.rtl,
       child: ClipRRect(
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        child: BlocBuilder<OfferDetailsCubit, OfferDetailsState>(
+        child: BlocBuilder<CharityNeedDetailsCubit, CharityNeedDetailsState>(
           builder: (context, state) {
-            if (state is OfferDetailsLoading) {
+            if (state is CharityNeedDetailsLoading) {
               return const SizedBox(
                 height: 300,
                 child: ColoredBox(
@@ -42,7 +43,7 @@ class _OfferDetailsContent extends StatelessWidget {
                 ),
               );
             }
-            if (state is OfferDetailsFailure) {
+            if (state is CharityNeedDetailsFailure) {
               return SizedBox(
                 height: 300,
                 child: ColoredBox(
@@ -51,9 +52,9 @@ class _OfferDetailsContent extends StatelessWidget {
                 ),
               );
             }
-            if (state is OfferDetailsSuccess) {
-              return _OfferDetailsBody(
-                offer: state.offer,
+            if (state is CharityNeedDetailsSuccess) {
+              return _Body(
+                need: state.need,
                 applyStatus: state.applyStatus,
               );
             }
@@ -65,11 +66,11 @@ class _OfferDetailsContent extends StatelessWidget {
   }
 }
 
-class _OfferDetailsBody extends StatelessWidget {
-  final offer;
+class _Body extends StatelessWidget {
+  final CharityNeedModel need;
   final ApplyStatus applyStatus;
 
-  const _OfferDetailsBody({required this.offer, required this.applyStatus});
+  const _Body({required this.need, required this.applyStatus});
 
   @override
   Widget build(BuildContext context) {
@@ -79,14 +80,14 @@ class _OfferDetailsBody extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _HeroImage(imageUrl: offer.productImage, status: offer.status),
+            _HeroImage(imageUrl: need.productImage, priority: need.priority),
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    offer.productName,
+                    need.productName,
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -96,18 +97,13 @@ class _OfferDetailsBody extends StatelessWidget {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(
-                        Icons.business_outlined,
-                        size: 14,
-                        color: Colors.grey,
-                      ),
+                      const Icon(Icons.volunteer_activism_outlined,
+                          size: 14, color: Colors.grey),
                       const SizedBox(width: 4),
                       Text(
-                        offer.donorOrganizationName,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: Colors.grey,
-                        ),
+                        need.charityName,
+                        style:
+                            const TextStyle(fontSize: 13, color: Colors.grey),
                       ),
                     ],
                   ),
@@ -116,17 +112,17 @@ class _OfferDetailsBody extends StatelessWidget {
                     children: [
                       Expanded(
                         child: _StatCard(
-                          label: 'الكمية',
-                          value: '${offer.quantity}',
-                          unit: 'وحدة',
+                          label: 'الكمية المطلوبة',
+                          value: '${need.quantity}',
+                          unit: _unitLabel(need.unit),
                           icon: Icons.inventory_2_outlined,
                         ),
                       ),
                       const SizedBox(width: 10),
                       Expanded(
                         child: _StatCard(
-                          label: 'تاريخ الانتهاء',
-                          value: _formatDate(offer.expiryDate),
+                          label: 'تاريخ الطلب',
+                          value: _formatDate(need.createdAt),
                           icon: Icons.calendar_today_outlined,
                         ),
                       ),
@@ -135,65 +131,45 @@ class _OfferDetailsBody extends StatelessWidget {
                   const SizedBox(height: 14),
                   _InfoGroup(
                     children: [
-                      if (offer.governorate != null || offer.city != null)
+                      if (need.governorate != null || need.city != null)
                         _InfoTile(
                           icon: Icons.map_outlined,
                           label: 'المحافظة / المدينة',
                           value:
-                              '${offer.governorate ?? ''}${offer.city != null ? ' — ${offer.city}' : ''}',
+                              '${need.governorate ?? ''} — ${need.city ?? ''}',
                         ),
-                      if (offer.address != null)
+                      if (need.email != null)
                         _InfoTile(
-                          icon: Icons.location_on_outlined,
-                          label: 'العنوان',
-                          value: offer.address!,
+                          icon: Icons.email_outlined,
+                          label: 'البريد الإلكتروني',
+                          value: need.email!,
                         ),
-                      if (offer.phone != null)
+                      if (need.phone != null)
                         _InfoTile(
                           icon: Icons.phone_outlined,
                           label: 'التليفون',
-                          value: offer.phone!,
+                          value: need.phone!,
+                        ),
+                      if (need.whatsapp != null)
+                        _InfoTile(
+                          icon: Icons.chat_outlined,
+                          label: 'واتساب',
+                          value: need.whatsapp!,
                           isLast: true,
                         ),
                     ],
                   ),
-                  if (offer.description != null) ...[
+                  if (need.description != null) ...[
                     const SizedBox(height: 14),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade50,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.grey.shade200),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'الوصف',
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: Colors.grey,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            offer.description!,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.black87,
-                              height: 1.6,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    _DescBox(title: 'وصف الاحتياج', text: need.description!),
+                  ],
+                  if (need.charityDescription != null) ...[
+                    const SizedBox(height: 10),
+                    _DescBox(title: 'عن الجمعية', text: need.charityDescription!),
                   ],
                   const SizedBox(height: 20),
                   _ApplyButton(
-                    offerId: offer.offerId,
+                    charityNeedId: need.charityNeedId,
                     applyStatus: applyStatus,
                   ),
                   const SizedBox(height: 8),
@@ -214,33 +190,27 @@ class _OfferDetailsBody extends StatelessWidget {
       return raw;
     }
   }
+
+  String _unitLabel(int unit) {
+    const units = {
+      0: 'ملجم', 1: 'كجم', 2: 'طن',
+      3: 'لتر',  4: 'مل',  5: 'كرتونة',
+      6: 'قطعة', 7: 'علبة', 8: 'حبة',
+    };
+    return units[unit] ?? 'وحدة';
+  }
 }
 
 class _HeroImage extends StatelessWidget {
   final String? imageUrl;
-  final int status;
+  final int priority;
 
-  const _HeroImage({required this.imageUrl, required this.status});
+  const _HeroImage({required this.imageUrl, required this.priority});
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Positioned(
-          top: 10,
-          left: 0,
-          right: 0,
-          child: Center(
-            child: Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.7),
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          ),
-        ),
         SizedBox(
           width: double.infinity,
           height: 220,
@@ -248,15 +218,12 @@ class _HeroImage extends StatelessWidget {
               ? Image.network(
                   imageUrl!,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => _PlaceholderImage(),
+                  errorBuilder: (_, __, ___) => _Placeholder(),
                 )
-              : _PlaceholderImage(),
+              : _Placeholder(),
         ),
         Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: 70,
+          bottom: 0, left: 0, right: 0, height: 70,
           child: Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -267,47 +234,59 @@ class _HeroImage extends StatelessWidget {
             ),
           ),
         ),
-        Positioned(top: 24, left: 14, child: _StatusBadge(status: status)),
+        Positioned(
+          top: 10, left: 0, right: 0,
+          child: Center(
+            child: Container(
+              width: 40, height: 4,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.7),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          top: 24, left: 14,
+          child: _PriorityBadge(priority: priority),
+        ),
       ],
     );
   }
 }
 
-class _PlaceholderImage extends StatelessWidget {
+class _Placeholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
       color: const Color(0xFFE1F5EE),
       child: const Center(
-        child: Icon(
-          Icons.image_not_supported_outlined,
-          size: 52,
-          color: Color(0xFF0F6E56),
-        ),
+        child: Icon(Icons.image_not_supported_outlined,
+            size: 52, color: Color(0xFF0F6E56)),
       ),
     );
   }
 }
 
-class _StatusBadge extends StatelessWidget {
-  final int status;
-  const _StatusBadge({required this.status});
+class _PriorityBadge extends StatelessWidget {
+  final int priority;
+  const _PriorityBadge({required this.priority});
 
   @override
   Widget build(BuildContext context) {
-    final isActive = status == 1;
+    final isUrgent = priority == 1;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: isActive ? const Color(0xFFE1F5EE) : Colors.grey.shade100,
+        color: isUrgent ? const Color(0xFFFAEEDA) : const Color(0xFFE1F5EE),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
-        isActive ? 'متاح' : 'غير متاح',
+        isUrgent ? 'عاجل' : 'عادي',
         style: TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w600,
-          color: isActive ? const Color(0xFF0F6E56) : Colors.grey.shade600,
+          color: isUrgent ? const Color(0xFF854F0B) : const Color(0xFF0F6E56),
         ),
       ),
     );
@@ -343,10 +322,8 @@ class _StatCard extends StatelessWidget {
             children: [
               Icon(icon, size: 13, color: Colors.grey),
               const SizedBox(width: 4),
-              Text(
-                label,
-                style: const TextStyle(fontSize: 11, color: Colors.grey),
-              ),
+              Text(label,
+                  style: const TextStyle(fontSize: 11, color: Colors.grey)),
             ],
           ),
           const SizedBox(height: 6),
@@ -425,19 +402,14 @@ class _InfoTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  label,
-                  style: const TextStyle(fontSize: 11, color: Colors.grey),
-                ),
+                Text(label,
+                    style: const TextStyle(fontSize: 11, color: Colors.grey)),
                 const SizedBox(height: 2),
-                Text(
-                  value,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
-                  ),
-                ),
+                Text(value,
+                    style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87)),
               ],
             ),
           ),
@@ -447,11 +419,45 @@ class _InfoTile extends StatelessWidget {
   }
 }
 
+class _DescBox extends StatelessWidget {
+  final String title;
+  final String text;
+
+  const _DescBox({required this.title, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title,
+              style: const TextStyle(
+                  fontSize: 11,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w600)),
+          const SizedBox(height: 6),
+          Text(text,
+              style: const TextStyle(
+                  fontSize: 14, color: Colors.black87, height: 1.6)),
+        ],
+      ),
+    );
+  }
+}
+
 class _ApplyButton extends StatelessWidget {
-  final String offerId;
+  final String charityNeedId;
   final ApplyStatus applyStatus;
 
-  const _ApplyButton({required this.offerId, required this.applyStatus});
+  const _ApplyButton({required this.charityNeedId, required this.applyStatus});
 
   @override
   Widget build(BuildContext context) {
@@ -463,21 +469,23 @@ class _ApplyButton extends StatelessWidget {
     final Color btnColor = isAlreadyApplied
         ? Colors.amber.shade600
         : isApplied
-        ? Colors.green.shade600
-        : AppColors.primaryText;
+            ? Colors.green.shade600
+            : AppColors.primaryText;
 
     final String btnText = isAlreadyApplied
         ? 'تم التقديم مسبقاً'
         : isApplied
-        ? 'تم تقديم الطلب ✓'
-        : 'الحصول على العرض';
+            ? 'تم تقديم التبرع ✓'
+            : 'تقديم تبرع';
 
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
         onPressed: isDone || isLoading
             ? null
-            : () => context.read<OfferDetailsCubit>().applyOffer(offerId),
+            : () => context
+                .read<CharityNeedDetailsCubit>()
+                .applyNeed(charityNeedId),
         style: ElevatedButton.styleFrom(
           backgroundColor: btnColor,
           disabledBackgroundColor: btnColor,
@@ -492,9 +500,7 @@ class _ApplyButton extends StatelessWidget {
                 height: 20,
                 width: 20,
                 child: CircularProgressIndicator(
-                  color: Colors.white,
-                  strokeWidth: 2,
-                ),
+                    color: Colors.white, strokeWidth: 2),
               )
             : Text(
                 btnText,

@@ -1,8 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wafer/core/enum/apply_status.dart';
 import 'package:wafer/features/offers/data/repo/offers_repo.dart';
 import 'package:wafer/features/offers/presentation/manger/offer_cubit/offers_state.dart';
-
-import '../../views/widgets/apply_status.dart';
 
 class OffersCubit extends Cubit<OffersState> {
   final OffersRepo offersRepo;
