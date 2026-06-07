@@ -39,32 +39,59 @@ class ReceivedApplicationModel {
     required this.createdAt,
   });
 
- ReceivedApplicationModel copyWith({int? charityNeedStatus, int? status}) {
-  return ReceivedApplicationModel(
-    needApplicationId: needApplicationId,
-    charityNeedStatus: charityNeedStatus ?? this.charityNeedStatus,
-    charityNeedId: charityNeedId,
-    productName: productName,
-    donorOrganizationId: donorOrganizationId,
-    donorOrganizationName: donorOrganizationName,
-    quantity: quantity,
-    unit: unit,
-    status: status ?? this.status,
-    email: email,
-    phone: phone,
-    whatsapp: whatsapp,
-    city: city,
-    governorate: governorate,
-    donorOrganizationDescription: donorOrganizationDescription,
-    needDescription: needDescription,
-    productImage: productImage,
-    createdAt: createdAt,
-  );
-}
-
-  factory ReceivedApplicationModel.fromJson(Map<String, dynamic> json) {
+  ReceivedApplicationModel copyWith({int? charityNeedStatus, int? status}) {
     return ReceivedApplicationModel(
-      needApplicationId: json['needApplicationId'] ?? '',
+      needApplicationId: needApplicationId,
+      charityNeedStatus: charityNeedStatus ?? this.charityNeedStatus,
+      charityNeedId: charityNeedId,
+      productName: productName,
+      donorOrganizationId: donorOrganizationId,
+      donorOrganizationName: donorOrganizationName,
+      quantity: quantity,
+      unit: unit,
+      status: status ?? this.status,
+      email: email,
+      phone: phone,
+      whatsapp: whatsapp,
+      city: city,
+      governorate: governorate,
+      donorOrganizationDescription: donorOrganizationDescription,
+      needDescription: needDescription,
+      productImage: productImage,
+      createdAt: createdAt,
+    );
+  }
+
+  // factory ReceivedApplicationModel.fromJson(Map<String, dynamic> json) {
+  //   return ReceivedApplicationModel(
+  //     needApplicationId: json['needApplicationId'] ?? '',
+  //     charityNeedStatus: json['charityNeedStatus'] ?? 0,
+  //     charityNeedId: json['charityNeedId'] ?? '',
+  //     productName: json['productName'] ?? '',
+  //     donorOrganizationId: json['donorOrganizationId'] ?? '',
+  //     donorOrganizationName: json['donorOrganizationName'] ?? '',
+  //     quantity: (json['quantity'] as num).toDouble(),
+  //     unit: json['unit'] ?? 0,
+  //     status: json['status'] ?? 0,
+  //     email: json['email'] ?? '',
+  //     phone: json['phone'] ?? '',
+  //     whatsapp: json['whatsapp'] ?? '',
+  //     city: json['city'] ?? '',
+  //     governorate: json['governorate'] ?? '',
+  //     donorOrganizationDescription: json['donorOraganizationDesctption'] ?? '',
+  //     needDescription: json['needDescription'] ?? '',
+  //     productImage: json['productImage'] ?? '',
+  //     createdAt: json['createdAt'] ?? '',
+  //   );
+  // }
+
+  factory ReceivedApplicationModel.fromJson(
+    Map<String, dynamic> json, {
+    String idKey = 'needApplicationId',
+  }) {
+    return ReceivedApplicationModel(
+      needApplicationId: json[idKey] ?? '',
+      // باقي الـ fields كما هي
       charityNeedStatus: json['charityNeedStatus'] ?? 0,
       charityNeedId: json['charityNeedId'] ?? '',
       productName: json['productName'] ?? '',
@@ -85,4 +112,3 @@ class ReceivedApplicationModel {
     );
   }
 }
-
