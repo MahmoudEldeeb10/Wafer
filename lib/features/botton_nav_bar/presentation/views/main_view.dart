@@ -4,6 +4,7 @@ import 'package:wafer/core/utils/app_colors.dart';
 import 'package:wafer/features/botton_nav_bar/presentation/manager/cubit/bottom_nav_cubit.dart';
 import 'package:wafer/features/offers/presentation/views/offers_view.dart';
 import 'package:wafer/features/posts/presentation/views/posts_view.dart';
+import 'package:wafer/features/profile/presentation/manger/profile_cubit.dart';
 import 'package:wafer/features/profile/presentation/views/profile_view.dart';
 import 'package:wafer/features/requests/presentation/views/request_view.dart';
 
@@ -12,7 +13,8 @@ class MainView extends StatelessWidget {
 
   final List pages = [
     // HomeView(),
-    ProfileView(),
+    // ProfileView(),
+    BlocProvider(create: (_) => ProfileCubit(), child: const ProfileView()),
     PostsView(),
     OffersView(),
     RequestView(),
