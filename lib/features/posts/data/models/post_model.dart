@@ -24,15 +24,16 @@ class PostModel {
   });
 
   factory PostModel.fromJson(Map<String, dynamic> json) => PostModel(
-        id: json['charityNeedId']?.toString(),
-        productName: json['productName'],
-        description: json['description'],
-        category: json['category'],
-        quantity: json['quantity']?.toDouble(),
-        unit: json['unit'],
-        status: json['status'],
-        createdAt: json['createdAt'],
-        imageUrl: json['productImage'],
-        charityName: json['charityName'],
-      );
+    // charity → charityNeedId, donor → offerId
+    id: (json['charityNeedId'] ?? json['offerId'])?.toString(),
+    productName: json['productName'],
+    description: json['description'],
+    category: json['category'],
+    quantity: (json['quantity'] as num?)?.toDouble(),
+    unit: json['unit'],
+    status: json['status'],
+    createdAt: json['createdAt'],
+    imageUrl: json['productImage'],
+    charityName: json['charityName'],
+  );
 }

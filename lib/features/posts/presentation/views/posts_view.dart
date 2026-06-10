@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wafer/core/utils/app_colors.dart';
 import 'package:wafer/core/utils/styles.dart';
 import 'package:wafer/core/widgets/custom_app_bar.dart';
 import 'package:wafer/features/posts/presentation/manager/posts_cubit/posts_cubit.dart';
 import 'package:wafer/features/posts/presentation/manager/posts_cubit/posts_state.dart';
-import 'package:wafer/features/posts/presentation/views/widgets/add_post.dart';
-import 'widgets/custom_card.dart';
+import 'package:wafer/features/posts/presentation/views/widgets/add_post_shhet.dart';
+import 'package:wafer/features/posts/presentation/views/widgets/custom_card.dart';
 
 class PostsView extends StatefulWidget {
   const PostsView({super.key});
@@ -16,22 +17,55 @@ class PostsView extends StatefulWidget {
 }
 
 class _PostsViewState extends State<PostsView> {
+  int _role = -1;
   int? _selectedStatus;
+  late PostsCubit _postsCubit;
 
   @override
   void initState() {
     super.initState();
+    _postsCubit = PostsCubit(role: -1);
+    _loadRoleAndFetch();
+  }
+
+  Future<void> _loadRoleAndFetch() async {
+    final prefs = await SharedPreferences.getInstance();
+    final role = prefs.getInt('accountType') ?? -1;
+    setState(() => _role = role);
+    _postsCubit.updateRole(role);
+    _postsCubit.getPosts();
   }
 
   String _getCategoryName(int category) {
+    if (_role == 1) {
+      const names = {0: 'غذاء', 1: 'ملابس', 2: 'طبي', 3: 'تعليم', 4: 'أخرى'};
+      return names[category] ?? 'أخرى';
+    }
     const names = {0: 'مواد غذائية', 1: 'ملابس', 2: 'أدوية', 3: 'أثاث'};
     return names[category] ?? 'أخرى';
   }
 
+  void _openAddSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => AddPostSheet(role: _role),
+    );
+  }
+
+  @override
+  void dispose() {
+    _postsCubit.close();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => PostsCubit()..getPosts(),
+    return BlocProvider.value(
+      value: _postsCubit,
       child: Scaffold(
         backgroundColor: AppColors.fourthText,
         body: SafeArea(
@@ -41,27 +75,17 @@ class _PostsViewState extends State<PostsView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CustomAppBar(
-                    title: 'المنشورات !',
-                    firstIcon: Icons.add,
-                    secondIcon: Icons.notifications_none,
-                    onFirstIconTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(20),
-                          ),
-                        ),
-                        builder: (_) => const AddCharityNeedSheet(),
-                      );
-                    },
+                  Builder(
+                    builder: (context) => CustomAppBar(
+                      title: 'المنشورات !',
+                      firstIcon: Icons.add,
+                      secondIcon: Icons.notifications_none,
+                      onFirstIconTap: () => _openAddSheet(context),
+                    ),
                   ),
 
                   const SizedBox(height: 20),
 
-                  /// Filter Dropdown
                   Row(
                     children: [
                       Text(
@@ -120,7 +144,6 @@ class _PostsViewState extends State<PostsView> {
 
                   const SizedBox(height: 18),
 
-                  /// Posts List
                   BlocConsumer<PostsCubit, PostsState>(
                     listener: (context, state) {
                       if (state is PostsError) {
@@ -133,7 +156,7 @@ class _PostsViewState extends State<PostsView> {
                       }
                     },
                     builder: (context, state) {
-                      if (state is PostsLoading) {
+                      if (state is PostsLoading || state is PostsInitial) {
                         return const Padding(
                           padding: EdgeInsets.only(top: 40),
                           child: Center(

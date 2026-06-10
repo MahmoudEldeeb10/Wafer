@@ -15,7 +15,3 @@ class PostsError extends PostsState {
   final String message;
   PostsError(this.message);
 }
-
-class PostsApplySuccess extends PostsState {}
-
-class PostsFulfillSuccess extends PostsState {}

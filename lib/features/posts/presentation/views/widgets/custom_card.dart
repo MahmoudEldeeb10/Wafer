@@ -30,7 +30,13 @@ class CustomCard extends StatelessWidget {
   }
 
   String _getStatusText(int status) {
-    const texts = {0: 'قيد المراجعة', 1: 'مقبولة', 2: 'مرفوضة', 3: 'مكتملة'};
+    const texts = {
+      0: 'قيد المراجعة',
+      1: 'مقبولة',
+      2: 'مرفوضة',
+      3: 'مكتملة',
+      4: 'منتهية',
+    };
     return texts[status] ?? '';
   }
 
@@ -44,6 +50,8 @@ class CustomCard extends StatelessWidget {
         return Colors.red;
       case 3:
         return AppColors.primaryText;
+      case 4:
+        return Colors.grey.shade600;
       default:
         return Colors.grey;
     }
@@ -101,7 +109,6 @@ class CustomCard extends StatelessWidget {
 
           const SizedBox(height: 14),
 
-          /// Category
           Text(
             category,
             textAlign: TextAlign.right,
@@ -113,7 +120,6 @@ class CustomCard extends StatelessWidget {
 
           const SizedBox(height: 8),
 
-          /// Description
           Text(
             description,
             textAlign: TextAlign.right,
@@ -140,8 +146,10 @@ class CustomCard extends StatelessWidget {
             Align(
               alignment: Alignment.centerRight,
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: _getStatusColor(status!).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
@@ -157,8 +165,6 @@ class CustomCard extends StatelessWidget {
               ),
             ),
           ],
-
-
         ],
       ),
     );
