@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wafer/core/utils/app_colors.dart';
-import 'package:wafer/core/utils/styles.dart';
 import 'package:wafer/core/widgets/custom_app_bar.dart';
 import 'package:wafer/features/profile/data/models/profile_model.dart';
 import 'package:wafer/features/profile/presentation/manger/profile_cubit.dart';
@@ -24,6 +23,9 @@ class _ProfileViewState extends State<ProfileView> {
   final _governorateCtrl = TextEditingController();
   final _postalCodeCtrl = TextEditingController();
 
+  int _verificationState = 0;
+  ProfileModel? _cachedProfile;
+
   @override
   void initState() {
     super.initState();
@@ -31,14 +33,27 @@ class _ProfileViewState extends State<ProfileView> {
   }
 
   void _fillControllers(ProfileModel profile) {
-    _nameCtrl.text = profile.charityDetails?.charityName ?? '';
+    _nameCtrl.text =
+        profile.charityDetails?.charityName ??
+        profile.donorDetails?.donorOrganizationName ??
+        '';
     _usernameCtrl.text = profile.userName ?? '';
-    _phoneCtrl.text = profile.phone ?? '';
-    _whatsappCtrl.text = profile.whatsapp ?? '';
+    _phoneCtrl.text = _stripCountryCode(profile.phone ?? '');
+    _whatsappCtrl.text = _stripCountryCode(profile.whatsapp ?? '');
     _emailCtrl.text = profile.email ?? '';
     _cityCtrl.text = profile.city ?? '';
     _governorateCtrl.text = profile.governorate ?? '';
     _postalCodeCtrl.text = profile.postalCode ?? '';
+    setState(() {
+      _verificationState = profile.verificationState ?? 0;
+      _cachedProfile = profile;
+    });
+  }
+
+  String _stripCountryCode(String phone) {
+    if (phone.startsWith('+20')) return phone.substring(3);
+    if (phone.startsWith('20')) return phone.substring(2);
+    return phone;
   }
 
   @override
@@ -62,42 +77,35 @@ class _ProfileViewState extends State<ProfileView> {
       body: SafeArea(
         child: BlocConsumer<ProfileCubit, ProfileState>(
           listener: (context, state) {
-            if (state is ProfileLoaded) _fillControllers(state.profile);
+            if (state is ProfileLoaded) {
+              _cachedProfile = state.profile;
+              _fillControllers(state.profile);
+            }
+
             if (state is ProfileUpdateSuccess) {
-              showDialog(
-                context: context,
-                builder: (_) => AlertDialog(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  title: const Center(
-                    child: Icon(
-                      Icons.check_circle,
-                      color: Colors.green,
-                      size: 60,
-                    ),
-                  ),
-                  content: const Text(
-                    'تم تعديل البيانات بنجاح',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  actionsAlignment: MainAxisAlignment.center,
-                  actions: [
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryText,
-                      ),
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text(
-                        'حسناً',
-                        style: TextStyle(color: AppColors.fourthText),
-                      ),
-                    ),
-                  ],
+              context.read<ProfileCubit>().submitVerification();
+            }
+
+            if (state is ProfileVerificationSuccess) {
+              setState(() => _verificationState = 1);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('تم إرسال طلب التحقق بنجاح'),
+                  backgroundColor: Colors.green,
                 ),
               );
             }
+
+            if (state is ProfileVerificationCancelled) {
+              setState(() => _verificationState = 0);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('تم إلغاء طلب التحقق'),
+                  backgroundColor: Colors.orange,
+                ),
+              );
+            }
+
             if (state is ProfileError) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -108,13 +116,12 @@ class _ProfileViewState extends State<ProfileView> {
             }
           },
           builder: (context, state) {
-            final profile = state is ProfileLoaded ? state.profile : null;
+            final isLoading = state is ProfileLoading;
 
             return SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               child: Column(
                 children: [
-                  /// ── Header + Image ──────────────────────────────
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     child: CustomAppBar(
@@ -126,58 +133,31 @@ class _ProfileViewState extends State<ProfileView> {
 
                   const SizedBox(height: 16),
 
-                  /// Profile Image with overlay
+                  /// Profile Image
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
-                    child: Stack(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(24),
-                          child: profile?.imageUrl != null
-                              ? Image.network(
-                                  profile!.imageUrl!,
-                                  height: 200,
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (_, __, ___) =>
-                                      _imagePlaceholder(),
-                                )
-                              : _imagePlaceholder(),
-                        ),
-
-                        /// Overlay buttons
-                        // Positioned(
-                        //   bottom: 10,
-                        //   left: 10,
-                        //   child: Row(
-                        //     children: [
-                        //       _imageActionBtn(
-                        //         icon: Icons.edit_outlined,
-                        //         color: AppColors.primaryText,
-                        //         onTap: () {},
-                        //       ),
-                        //       const SizedBox(width: 8),
-                        //       _imageActionBtn(
-                        //         icon: Icons.delete_outline,
-                        //         color: Colors.red,
-                        //         onTap: () {},
-                        //       ),
-                        //     ],
-                        //   ),
-                        // ),
-                      ],
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(24),
+                      child: _cachedProfile?.imageUrl != null
+                          ? Image.network(
+                              _cachedProfile!.imageUrl!,
+                              height: 200,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => _imagePlaceholder(),
+                            )
+                          : _imagePlaceholder(),
                     ),
                   ),
 
                   const SizedBox(height: 24),
 
-                  /// ── Form ────────────────────────────────────────
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (state is ProfileLoading)
+                        if (isLoading)
                           const Padding(
                             padding: EdgeInsets.only(bottom: 16),
                             child: Center(child: CircularProgressIndicator()),
@@ -229,47 +209,62 @@ class _ProfileViewState extends State<ProfileView> {
 
                         const SizedBox(height: 32),
 
-                        /// Save Button
-                        SizedBox(
-                          width: double.infinity,
-                          height: 55,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryText,
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18),
+                        /// الزرار - يظهر بس لما البيانات تتحمل
+                        if (_cachedProfile != null)
+                          SizedBox(
+                            width: double.infinity,
+                            height: 55,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: _verificationState == 1
+                                    ? Colors.red
+                                    : AppColors.primaryText,
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18),
+                                ),
                               ),
-                            ),
-                            onPressed: state is ProfileLoading
-                                ? null
-                                : () {
-                                    context.read<ProfileCubit>().updateProfile(
-                                      ProfileModel(
-                                        userName: _usernameCtrl.text,
-                                        email: _emailCtrl.text,
-                                        phone: _phoneCtrl.text,
-                                        whatsapp: _whatsappCtrl.text,
-                                        city: _cityCtrl.text,
-                                        governorate: _governorateCtrl.text,
-                                        postalCode: _postalCodeCtrl.text,
+                              onPressed: isLoading
+                                  ? null
+                                  : () {
+                                      if (_verificationState == 1) {
+                                        context
+                                            .read<ProfileCubit>()
+                                            .cancelVerification();
+                                      } else {
+                                        context
+                                            .read<ProfileCubit>()
+                                            .updateProfile(
+                                              ProfileModel(
+                                                userName: _usernameCtrl.text,
+                                                email: _emailCtrl.text,
+                                                phone: _phoneCtrl.text,
+                                                whatsapp: _whatsappCtrl.text,
+                                                city: _cityCtrl.text,
+                                                governorate:
+                                                    _governorateCtrl.text,
+                                                postalCode:
+                                                    _postalCodeCtrl.text,
+                                              ),
+                                            );
+                                      }
+                                    },
+                              child: isLoading
+                                  ? const CircularProgressIndicator(
+                                      color: Colors.white,
+                                    )
+                                  : Text(
+                                      _verificationState == 1
+                                          ? 'إلغاء الطلب'
+                                          : 'حفظ التعديلات',
+                                      style: const TextStyle(
+                                        color: AppColors.fourthText,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                    );
-                                  },
-                            child: state is ProfileLoading
-                                ? const CircularProgressIndicator(
-                                    color: Colors.white,
-                                  )
-                                : const Text(
-                                    'حفظ التعديلات',
-                                    style: TextStyle(
-                                      color: AppColors.fourthText,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
                                     ),
-                                  ),
+                            ),
                           ),
-                        ),
 
                         const SizedBox(height: 120),
                       ],
@@ -284,7 +279,6 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
-  /// Section card with title
   Widget _buildSection({
     required String title,
     required List<Widget> children,
@@ -321,7 +315,6 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
-  /// Single field inside a section
   Widget _buildField({
     required String label,
     required TextEditingController controller,
@@ -400,25 +393,4 @@ class _ProfileViewState extends State<ProfileView> {
     ),
     child: const Icon(Icons.image_outlined, size: 60, color: Colors.grey),
   );
-
-  Widget _imageActionBtn({
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 6),
-          ],
-        ),
-        child: Icon(icon, color: color, size: 22),
-      ),
-    );
-  }
 }

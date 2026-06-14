@@ -13,6 +13,7 @@ class ProfileModel {
   final int? verificationState;
   final bool? isActive;
   final CharityDetails? charityDetails;
+  final DonorDetails? donorDetails;
 
   ProfileModel({
     this.userName,
@@ -29,6 +30,7 @@ class ProfileModel {
     this.verificationState,
     this.isActive,
     this.charityDetails,
+    this.donorDetails,
   });
 
   factory ProfileModel.fromJson(Map<String, dynamic> json) => ProfileModel(
@@ -47,6 +49,9 @@ class ProfileModel {
     isActive: json['isActive'],
     charityDetails: json['charityDetails'] != null
         ? CharityDetails.fromJson(json['charityDetails'])
+        : null,
+    donorDetails: json['donorDetails'] != null
+        ? DonorDetails.fromJson(json['donorDetails'])
         : null,
   );
 
@@ -85,5 +90,32 @@ class CharityDetails {
     headquartersAddress: json['headquartersAddress'],
     authorizedPersonName: json['authorizedPersonName'],
     authorizedPersonPosition: json['authorizedPersonPosition'],
+  );
+}
+
+class DonorDetails {
+  final String? donorOrganizationName;
+  final String? donorOrganizationDescription;
+  final String? commercialRegistrationNumber;
+  final String? taxNumber;
+  final String? businessLicenseNumber;
+  final String? headquartersAddress;
+
+  DonorDetails({
+    this.donorOrganizationName,
+    this.donorOrganizationDescription,
+    this.commercialRegistrationNumber,
+    this.taxNumber,
+    this.businessLicenseNumber,
+    this.headquartersAddress,
+  });
+
+  factory DonorDetails.fromJson(Map<String, dynamic> json) => DonorDetails(
+    donorOrganizationName: json['donorOrganizationName'],
+    donorOrganizationDescription: json['donorOrganizationDescription'],
+    commercialRegistrationNumber: json['commercialRegistrationNumber'],
+    taxNumber: json['taxNumber'],
+    businessLicenseNumber: json['businessLicenseNumber'],
+    headquartersAddress: json['headquartersAddress'],
   );
 }

@@ -19,6 +19,8 @@ class ProfileImageSuccess extends ProfileState {}
 
 class ProfileVerificationSuccess extends ProfileState {}
 
+class ProfileVerificationCancelled extends ProfileState {}
+
 class ProfileError extends ProfileState {
   final String message;
   ProfileError(this.message);

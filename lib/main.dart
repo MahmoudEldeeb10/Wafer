@@ -26,6 +26,7 @@ class Wafer extends StatelessWidget {
           GlobalCupertinoLocalizations.delegate,
         ],
 
+
         builder: (context, child) {
           return Directionality(
             textDirection: TextDirection.rtl,
